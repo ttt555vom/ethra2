@@ -26,7 +26,9 @@ window.EthraApp = (function () {
     PAGE_SIZE: 5,                       // عدد المقاطع التي تظهر في كل مرة (Pagination)
 
     // مفتاح التبديل للسيرفر المستقبلي
-    USE_REMOTE_API: false // إذا أصبحت true، سيتم قراءة البيانات من السيرفر.
+    USE_REMOTE_API: false,// إذا أصبحت true، سيتم قراءة البيانات من السيرفر.
+    CLOUDINARY_CLOUD_NAME: "dmpjtq50y",         // ضع اسم السحابة الخاص بك من Cloudinary
+    CLOUDINARY_UPLOAD_PRESET: "ethra2_preset"  // ضع اسم الـ upload preset
   };
 
   // ==========================================
@@ -210,42 +212,45 @@ window.EthraApp = (function () {
     },
     
     put: function (clip) {
-      console.log("بدء عملية الرفع لـ:", clip.name);
-      // 1. رفع الفيديو إلى Firebase Storage
-      var file = clip.blob;
-      if (!file) {
+    console.log("بدء عملية الرفع لـ Cloudinary:", clip.name);
+    var file = clip.blob;
+    if (!file) {
         console.error("خطأ: لا يوجد ملف فيديو (blob) للرفع.");
         return Promise.reject(new Error("ملف الفيديو مفقود."));
-      }
-      
-      var fileName = clip.id + "_" + clip.fileName;
-      var storageRef = storage.ref("videos/" + fileName);
-      
-      console.log("جاري رفع الملف إلى Storage...");
-      return storageRef.put(file).then(function(snapshot) {
-        console.log("اكتمل رفع الملف. جاري الحصول على Download URL...");
-        return snapshot.ref.getDownloadURL();
-      }).then(function(downloadURL) {
-        console.log("تم الحصول على الرابط:", downloadURL);
-        // 2. حفظ البيانات في Firestore
+    }
+
+    var formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CONFIG.CLOUDINARY_UPLOAD_PRESET);
+    formData.append("folder", "ethra2_videos");
+
+    return fetch(
+        "https://api.cloudinary.com/v1_1/" + CONFIG.CLOUDINARY_CLOUD_NAME + "/video/upload",
+        {
+            method: "POST",
+            body: formData
+        }
+    )
+    .then(function(response) {
+        if (!response.ok) {
+            return response.json().then(function(err) { throw err; });
+        }
+        return response.json();
+    })
+    .then(function(data) {
+        console.log("تم الرفع إلى Cloudinary بنجاح:", data.secure_url);
         var clipData = {
-          id: clip.id,
-          name: clip.name,
-          fileName: clip.fileName,
-          videoUrl: downloadURL,
-          createdAt: clip.created || clip.createdAt || Date.now(),
-          userId: Auth.currentUser ? Auth.currentUser.uid : "anonymous",
-          tags: clip.tags || []
+            id: clip.id,
+            name: clip.name,
+            fileName: clip.fileName,
+            videoUrl: data.secure_url,
+            createdAt: clip.createdAt || Date.now(),
+            userId: Auth.currentUser ? Auth.currentUser.uid : "anonymous",
+            tags: clip.tags || []
         };
-        console.log("جاري حفظ البيانات في Firestore...");
         return db.collection("clips").doc(clip.id).set(clipData);
-      }).then(function() {
-        console.log("تم الحفظ بنجاح في Firestore.");
-      }).catch(function(error) {
-        console.error("خطأ في عملية الرفع أو الحفظ:", error);
-        throw error; // إعادة رمي الخطأ ليتعامل معه feed.js
-      });
-    },
+    });
+},
 
     delete: function (id) {
       // 1. جلب بيانات المقطع لمعرفة رابط الفيديو
