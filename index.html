@@ -1,0 +1,144 @@
+<!doctype html>
+
+<html lang="ar" dir="rtl">
+  <head>
+    <title>Ethra2</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="feed.css" />
+  </head>
+
+  <body class="home">
+    <header class="home-header">
+      <nav class="home-toolbar" aria-label="القائمة الرئيسية">
+        <div class="auth-section" id="auth-section">
+          <button id="auth-login-btn" class="toolbar-btn toolbar-auth">
+            تسجيل الدخول
+          </button>
+          <div id="auth-user-info" class="auth-user-info" hidden>
+            <span id="auth-user-name" class="auth-user-name"></span>
+            <button id="auth-logout-btn" class="toolbar-btn toolbar-auth">
+              خروج
+            </button>
+          </div>
+        </div>
+        <a href="search.html" class="toolbar-btn toolbar-search">البحث</a>
+        <label class="toolbar-btn toolbar-upload" id="upload-label" hidden>
+          <input
+            type="file"
+            id="clip-upload"
+            accept="video/*"
+            multiple
+            hidden
+          />
+          رفع مقطع
+        </label>
+      </nav>
+      <div
+        id="upload-panel"
+        class="upload-panel"
+        hidden
+        aria-hidden="true"
+        role="dialog"
+        aria-labelledby="upload-panel-title"
+      >
+        <div class="upload-panel-inner">
+          <h2 id="upload-panel-title" class="upload-panel-title">
+            تسمية المقاطع قبل النشر
+          </h2>
+          <div id="upload-names-list" class="upload-names-list"></div>
+          <p
+            id="upload-feedback"
+            class="upload-feedback"
+            aria-live="polite"
+          ></p>
+          <div class="upload-panel-actions">
+            <button
+              type="button"
+              id="upload-cancel"
+              class="upload-btn upload-btn-cancel"
+            >
+              إلغاء
+            </button>
+            <button
+              type="button"
+              id="upload-confirm"
+              class="upload-btn upload-btn-confirm"
+            >
+              نشر المقطع
+            </button>
+          </div>
+        </div>
+      </div>
+      <hr />
+    </header>
+
+    <main class="feed home-feed" id="feed" aria-label="مقاطع الفيديو">
+      <div class="feed-empty">لا توجد مقاطع بعد.</div>
+      <!-- لمقاطع حقيقية: أضف عناصر section.reel بترقيم data-index متسلسل -->
+    </main>
+
+    <footer>
+      <a href="downloads.html" class="post" title="المحفوظات والتنزيل"
+        ><img width="33" src="LOGO.png" alt="المحفوظات"
+      /></a>
+    </footer>
+
+    <!-- نافذة التعليقات المنبثقة -->
+    <div id="comments-modal" class="comments-modal" aria-hidden="true" hidden>
+      <div class="comments-modal-overlay" id="comments-modal-overlay"></div>
+      <div class="comments-modal-content" id="comments-modal-content">
+        <div class="comments-modal-drag-handle" id="comments-modal-drag-handle">
+          <div class="comments-modal-drag-bar"></div>
+        </div>
+        <div class="comments-modal-header">
+          <h2 class="comments-modal-title">
+            التعليقات (<span id="comments-count">0</span>)
+          </h2>
+          <button
+            type="button"
+            class="comments-modal-close"
+            id="comments-modal-close"
+            aria-label="إغلاق التعليقات"
+          >
+            &times;
+          </button>
+        </div>
+        <div class="comments-list" id="comments-list" aria-live="polite">
+          <!-- التعليقات تظهر هنا -->
+        </div>
+        <form class="comments-form" id="comments-form">
+          <input
+            type="text"
+            id="comment-input"
+            class="comment-input"
+            placeholder="اكتب تعليقاً..."
+            maxlength="200"
+            autocomplete="off"
+            required
+          />
+          <button
+            type="submit"
+            class="comment-submit"
+            id="comment-submit"
+            aria-label="إرسال"
+            disabled
+          >
+            إرسال
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-storage-compat.js"></script>
+    <script src="config.js"></script>
+    <script src="feed.js"></script>
+  </body>
+</html>

@@ -1,0 +1,423 @@
+:root {
+  --bg-color: #0c0c0c;
+  --surface-color: #141414;
+  --card-color: #1b1b1b;
+  --accent-color: #1e3a5f;
+  --accent-hover: #264b7a;
+  --text-primary: #ffffff;
+  --text-secondary: #8b8b8b;
+  --border-radius: 12px;
+  --border-radius-sm: 8px;
+  --transition-smooth: all 0.2s ease;
+  --font-stack: 'Inter', system-ui, -apple-system, sans-serif;
+  --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  margin: 0;
+  font-family: var(--font-stack);
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  display: inline-block;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+input,
+button,
+a.btn-back,
+a.return {
+  color: var(--text-primary);
+  font-family: var(--font-stack);
+}
+
+header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+a.btn-back,
+a.return {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 16px;
+  border-radius: var(--border-radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
+  -webkit-tap-highlight-color: transparent;
+  transition: var(--transition-smooth);
+}
+
+a.btn-back:hover,
+a.btn-back:focus-visible,
+a.return:hover,
+a.return:focus-visible {
+  color: var(--text-primary);
+  background: var(--surface-color);
+}
+
+.search-page-header {
+  align-items: center;
+  padding: 12px 16px calc(12px + env(safe-area-inset-top, 0px));
+  box-sizing: border-box;
+}
+
+.search-page-header .btn-back {
+  flex-shrink: 0;
+}
+
+a.post {
+  position: fixed;
+  bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  left: calc(24px + env(safe-area-inset-left, 0px));
+  z-index: 30;
+  border-radius: 50%;
+  background: var(--surface-color);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-sizing: border-box;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  transition: var(--transition-smooth);
+}
+
+a.post:hover,
+a.post:focus-visible {
+  background: var(--card-color);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+  transform: translateY(-2px);
+}
+
+a.post img {
+  display: block;
+  width: 24px;
+  height: auto;
+  object-fit: contain;
+  filter: grayscale(1) brightness(0) invert(0.6); /* Gray icon */
+}
+
+a.post:hover img {
+  filter: grayscale(1) brightness(0) invert(0.8); /* Slightly lighter gray on hover */
+}
+
+/* =========================================
+   نافذة التعليقات المنبثقة (Comments Modal)
+   ========================================= */
+.comments-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+  transition: opacity var(--transition-smooth);
+}
+
+.comments-modal:not([hidden]) {
+  pointer-events: auto;
+}
+
+.comments-modal[hidden] {
+  display: none;
+}
+
+.comments-modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.comments-modal:not([aria-hidden="true"]) .comments-modal-overlay {
+  opacity: 1;
+}
+
+.comments-modal-content {
+  position: relative;
+  width: 100%;
+  /* Make it cover 70% to 90% as requested */
+  max-height: 90vh;
+  height: 75vh;
+  background: var(--bg-color); /* Match dark background */
+  border-radius: 24px 24px 0 0; /* Top border radius only */
+  display: flex;
+  flex-direction: column;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.1, 0.8, 0.1, 1);
+  box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.8);
+  z-index: 101;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.comments-modal:not([aria-hidden="true"]) .comments-modal-content {
+  transform: translateY(0);
+}
+
+/* Handle dragging area */
+.comments-modal-drag-handle {
+  width: 100%;
+  height: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: grab;
+  flex-shrink: 0;
+}
+
+.comments-modal-drag-handle:active {
+  cursor: grabbing;
+}
+
+.comments-modal-drag-bar {
+  width: 40px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+.comments-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+.comments-modal-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary);
+  text-align: center;
+  flex: 1;
+}
+
+.comments-modal-close {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.comments-modal-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.comments-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-item {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03); /* Divider */
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.comment-author {
+  font-weight: 600;
+  font-size: 0.9rem; /* Smaller, professional font */
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.comment-date {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.comment-text {
+  font-size: 0.9rem; /* Smaller text */
+  line-height: 1.5;
+  margin: 0;
+  color: var(--text-primary);
+  word-wrap: break-word;
+}
+
+.comments-form {
+  display: flex;
+  padding: 16px 20px calc(16px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--surface-color);
+  gap: 12px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.comment-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid transparent;
+  border-radius: 20px;
+  padding: 10px 16px;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.2s;
+  font-family: inherit;
+}
+
+.comment-input:focus {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.comment-submit {
+  background: var(--accent-color);
+  color: var(--text-primary);
+  border: none;
+  font-weight: 600;
+  padding: 10px 16px;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: background 0.2s;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.comment-submit:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.comment-submit:disabled {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.3);
+  cursor: not-allowed;
+}
+
+.comments-empty-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+.comments-empty-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.comments-empty-text {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* مؤشر التحميل ورسائل الخطأ */
+.comments-loading, .comments-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.comments-error {
+  color: #ff4d4d;
+}
+
+/* =========================================
+   نظام المستخدمين (Auth Styles)
+   ========================================= */
+.auth-section {
+  display: flex;
+  align-items: center;
+}
+
+.auth-user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth-user-name {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toolbar-auth {
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  background: var(--surface-color);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius-sm);
+}
+
+.toolbar-auth:hover {
+  background: var(--card-color);
+}

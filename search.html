@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>البحث — Ethra2</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="search.css" />
+  </head>
+  <body class="search-page" style="background-color: rgb(12, 12, 12)">
+    <header class="search-page-header">
+      <div class="search-header-row">
+        <form
+          class="search-form"
+          id="search-form"
+          action="search.html"
+          method="get"
+        >
+          <input
+            type="search"
+            name="q"
+            id="clip-query"
+            class="search-box search-field"
+            placeholder="ابحث باسم المقطع…"
+            autocomplete="off"
+            enterkeyhint="search"
+          />
+          <button type="submit" class="search-submit">بحث</button>
+        </form>
+        <a href="index.html" class="btn-back">رجوع</a>
+      </div>
+      <div
+        id="search-recent"
+        class="search-recent"
+        aria-label="آخر عمليات البحث"
+        hidden
+      ></div>
+    </header>
+    <main class="search-main" id="search-results" aria-live="polite"></main>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.9.0/firebase-storage-compat.js"></script>
+    <script src="config.js"></script>
+    <script src="search.js"></script>
+  </body>
+</html>
